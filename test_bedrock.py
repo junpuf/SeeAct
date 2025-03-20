@@ -2,9 +2,9 @@
 import os
 import boto3
 
-#MODEL_ID = "us.meta.llama3-2-11b-instruct-v1:0"
-MODEL_ID = "arn:aws:bedrock:us-west-2:897880167187:imported-model/skiml9az32mw"
-IMAGE_NAME = "fridge.png"
+MODEL_ID = "arn:aws:bedrock:us-west-2:your bedrock model arn"
+IMAGE_NAME = "dog.jpeg"
+IMAGE_FORMAT = IMAGE_NAME.split(".")[-1]
 
 bedrock_runtime = boto3.client("bedrock-runtime", 
                                aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"], 
@@ -14,13 +14,13 @@ bedrock_runtime = boto3.client("bedrock-runtime",
 with open(IMAGE_NAME, "rb") as f:
     image = f.read()
 
-user_message = "What's in the fridge?"
+user_message = "What's in the image?"
 
 messages = [
     {
         "role": "user",
         "content": [
-            {"image": {"format": "png", "source": {"bytes": image}}},
+            {"image": {"format": IMAGE_FORMAT, "source": {"bytes": image}}},
             {"text": user_message},
         ],
     }

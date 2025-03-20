@@ -226,7 +226,7 @@ class LlamaBedrockEngine(Engine):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Set the model name for Llama 3.2 Vision
-        self.model = "us.meta.llama3-2-11b-instruct-v1:0"  # Replace with the correct model identifier
+        self.model = "arn:aws:bedrock:<your bedrock model arn>"  # Replace with the correct model identifier
         #self.model = "your_custom_model_arn"
         self.bedrock_runtime = boto3.client("bedrock-runtime", 
                                aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],

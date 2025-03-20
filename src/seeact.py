@@ -28,7 +28,7 @@ import warnings
 from dataclasses import dataclass
 
 import toml
-import torch
+# import torch
 from aioconsole import ainput, aprint
 from playwright.async_api import async_playwright
 
@@ -38,7 +38,7 @@ from demo_utils.browser_helper import (normal_launch_async, normal_new_context_a
                                        get_interactive_elements_with_playwright, select_option, saveconfig)
 from demo_utils.format_prompt import format_choices, format_ranking_input, postprocess_action_lmm
 from demo_utils.inference_engine import OpenaiEngine, LlamaBedrockEngine
-from demo_utils.ranking_model import CrossEncoder, find_topk
+# from demo_utils.ranking_model import CrossEncoder, find_topk
 from demo_utils.website_dict import website_dict
 
 # Remove Huggingface internal warnings
@@ -109,17 +109,17 @@ async def page_on_crash_handler(page):
 
 
 async def page_on_open_handler(page):
-    # print("Opened: ",page)
+    print("Opened: ",page)
     page.on("framenavigated", page_on_navigatio_handler)
     page.on("close", page_on_close_handler)
     page.on("crash", page_on_crash_handler)
     session_control.active_page = page
-    # print("The active tab is set to: ", page.url)
-    # print("All pages:")
-    # print('-'*10)
-    # print(session_control.context.pages)
-    # print("active page: ",session_control.active_page)
-    # print('-' * 10)
+    print("The active tab is set to: ", page.url)
+    print("All pages:")
+    print('-'*10)
+    print(session_control.context.pages)
+    print("active page: ",session_control.active_page)
+    print('-' * 10)
 
 
 async def main(config, base_dir) -> None:
@@ -158,10 +158,10 @@ async def main(config, base_dir) -> None:
         storage_state = None
 
     # openai settings
-    openai_config = config["openai"]
-    if openai_config["api_key"] == "Your API Key Here":
-        raise Exception(
-            f"Please set your GPT API key first. (in {os.path.join(base_dir, 'config', 'demo_mode.toml')} by default)")
+    # openai_config = config["openai"]
+    # if openai_config["api_key"] == "Your API Key Here":
+    #     raise Exception(
+    #         f"Please set your GPT API key first. (in {os.path.join(base_dir, 'config', 'demo_mode.toml')} by default)")
 
     # playwright settings
     save_video = config["playwright"]["save_video"]
@@ -187,10 +187,9 @@ async def main(config, base_dir) -> None:
 
     # Load ranking model for prune candidate elements
     ranking_model = None
-    if ranker_path:
-        ranking_model = CrossEncoder(ranker_path, device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-                                     num_labels=1, max_length=512, )
-
+    # if ranker_path:
+        # ranking_model = CrossEncoder(ranker_path, device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+        #                              num_labels=1, max_length=512, )
     if not is_demo:
         with open(f'{task_file_path}', 'r', encoding='utf-8') as file:
             query_tasks = json.load(file)
@@ -251,6 +250,7 @@ async def main(config, base_dir) -> None:
         logger.info(f"id: {task_id}")
         async with async_playwright() as playwright:
             session_control.browser = await normal_launch_async(playwright)
+            await asyncio.sleep(3)
             session_control.context = await normal_new_context_async(session_control.browser,
                                                                      tracing=tracing,
                                                                      storage_state=storage_state,
@@ -262,8 +262,8 @@ async def main(config, base_dir) -> None:
                                                                      geolocation=geolocation,
                                                                      locale=locale)
             session_control.context.on("page", page_on_open_handler)
-            await session_control.context.new_page()
             try:
+                await session_control.context.new_page()
                 await session_control.active_page.goto(confirmed_website_url, wait_until="load")
             except Exception as e:
                 logger.info("Failed to fully load the webpage before timeout")

@@ -23,10 +23,10 @@ import toml
 import os
 
 async def normal_launch_async(playwright: Playwright,headless=False,args=None):
-    browser = await playwright.chromium.launch(
-        traces_dir=None,
+    browser = await playwright.firefox.launch(
+        # traces_dir=None,
         headless=False,
-        args=args,
+        slow_mo=50  # Add small delays between operations
         # ignore_default_args=ignore_args,
         # chromium_sandbox=False,
     )
